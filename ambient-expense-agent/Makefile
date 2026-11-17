@@ -7,7 +7,7 @@ playground:
 	agents-cli playground
 
 serve:
-	uv run uvicorn fast_api_app:app --host 0.0.0.0 --port 8081
+	uv run uvicorn fast_api_app:app --host 0.0.0.0 --port 8080
 
 generate-traces:
 	uv run python tests/eval/generate_traces.py

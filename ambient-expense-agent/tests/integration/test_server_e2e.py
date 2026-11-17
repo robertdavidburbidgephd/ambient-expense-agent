@@ -31,7 +31,7 @@ from requests.exceptions import RequestException
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-BASE_URL = "http://127.0.0.1:8081"
+BASE_URL = "http://127.0.0.1:8080"
 TRIGGER_URL = BASE_URL + "/pubsub"
 FEEDBACK_URL = BASE_URL + "/feedback"
 
@@ -54,7 +54,7 @@ def start_server() -> subprocess.Popen[str]:
         "--host",
         "0.0.0.0",
         "--port",
-        "8081",
+        "8080",
     ]
     env = os.environ.copy()
     env["INTEGRATION_TEST"] = "TRUE"
@@ -83,7 +83,7 @@ def wait_for_server(timeout: int = 90, interval: int = 1) -> bool:
     start_time = time.time()
     while time.time() - start_time < timeout:
         try:
-            response = requests.get("http://127.0.0.1:8081/health", timeout=10)
+            response = requests.get("http://127.0.0.1:8080/health", timeout=10)
             if response.status_code == 200:
                 logger.info("Server is ready")
                 return True
