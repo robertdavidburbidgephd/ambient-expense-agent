@@ -9,17 +9,22 @@ from .config import AUTO_APPROVE_THRESHOLD
 
 @node
 def extract_expense(node_input: Any) -> Event:
-    if hasattr(node_input, "parts"):
-        # Passed as types.Content
-        text_data = node_input.parts[0].text
+    if hasattr(node_input, "parts") and node_input.parts:
+        part = node_input.parts[0]
+        text_data = getattr(part, "text", None) or (part.get("text") if isinstance(part, dict) else str(part))
         expense_event = ExpenseEvent(data=text_data)
+    elif isinstance(node_input, dict) and "parts" in node_input and node_input["parts"]:
+        part = node_input["parts"][0]
+        text_data = getattr(part, "text", None) or (part.get("text") if isinstance(part, dict) else str(part))
+        expense_event = ExpenseEvent(data=text_data)
+    elif isinstance(node_input, dict) and "amount" in node_input:
+        expense_event = ExpenseEvent(data=node_input)
+    elif isinstance(node_input, dict) and "data" in node_input:
+        expense_event = ExpenseEvent.model_validate(node_input)
+    elif isinstance(node_input, str):
+        expense_event = ExpenseEvent(data=node_input)
     else:
-        # Standard dictionary/ExpenseEvent casting
-        # If it's a dict representing Expense, wrap it in 'data'
-        if isinstance(node_input, dict) and "amount" in node_input:
-            expense_event = ExpenseEvent(data=node_input)
-        else:
-            expense_event = ExpenseEvent.model_validate(node_input)
+        expense_event = ExpenseEvent.model_validate(node_input)
         
     data = expense_event.get_parsed_data()
     expense = Expense.model_validate(data)

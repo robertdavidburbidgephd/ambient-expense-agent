@@ -8,17 +8,29 @@ class ExpenseEvent(BaseModel):
 
     def get_parsed_data(self) -> dict[str, Any]:
         if isinstance(self.data, dict):
+            if "data" in self.data:
+                return ExpenseEvent(data=self.data["data"]).get_parsed_data()
             return self.data
         try:
             # Try to base64 decode if it's a string
             decoded = base64.b64decode(self.data).decode("utf-8")
-            return json.loads(decoded)
+            parsed = json.loads(decoded)
+            if isinstance(parsed, dict):
+                if "data" in parsed:
+                    return ExpenseEvent(data=parsed["data"]).get_parsed_data()
+                return parsed
         except Exception:
-            try:
-                # Or try direct JSON parse
-                return json.loads(self.data)
-            except Exception:
-                raise ValueError("Could not parse event data as JSON")
+            pass
+        try:
+            # Or try direct JSON parse
+            parsed = json.loads(self.data)
+            if isinstance(parsed, dict):
+                if "data" in parsed:
+                    return ExpenseEvent(data=parsed["data"]).get_parsed_data()
+                return parsed
+        except Exception:
+            pass
+        raise ValueError("Could not parse event data as JSON")
 
 class Expense(BaseModel):
     amount: float

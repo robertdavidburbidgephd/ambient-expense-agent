@@ -25,6 +25,9 @@ app = get_fast_api_app(
     otel_to_cloud=False
 )
 
+from expense_agent.app_utils.reasoning_engine_adapter import attach_reasoning_engine_routes
+attach_reasoning_engine_routes(app)
+
 async def set_body(request: Request, body: bytes):
     """Helper to rewrite the body of a FastAPI Request."""
     async def receive():

@@ -59,6 +59,10 @@ app: FastAPI = get_fast_api_app(
 app.title = "ambient-expense-agent"
 app.description = "API for interacting with the Agent ambient-expense-agent"
 
+# Attach reasoning engine routes for Agent Runtime & Playground
+from expense_agent.app_utils.reasoning_engine_adapter import attach_reasoning_engine_routes
+attach_reasoning_engine_routes(app)
+
 # Setup Runner and Session Service for the workflow
 session_service = InMemorySessionService()
 runner = Runner(agent=root_agent, session_service=session_service, app_name="ambient-expense-agent")

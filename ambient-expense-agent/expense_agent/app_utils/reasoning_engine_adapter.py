@@ -46,12 +46,16 @@ def attach_reasoning_engine_routes(app: FastAPI) -> None:
     def get_runtime() -> AdkApp:
         nonlocal runtime, streaming_methods, sync_methods
         if runtime is None:
-            from expense_agent.agent import app as adk_app
+            import expense_agent.agent as agent_mod
+            adk_app = getattr(agent_mod, "app", None)
+            agent = getattr(agent_mod, "root_agent", None) if adk_app is None else None
 
             # Reuse the process-wide services so sessions created here are
             # visible to the adk_api and A2A paths, and vice versa (see services.py).
             runtime = AdkApp(
                 app=adk_app,
+                agent=agent,
+                app_name="ambient-expense-agent",
                 session_service_builder=services.get_session_service,
                 artifact_service_builder=services.get_artifact_service,
                 instrumentor_builder=_no_op_instrumentor_builder,
