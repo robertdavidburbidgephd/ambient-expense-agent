@@ -104,3 +104,6 @@ bash> curl -X POST http://localhost:8081/pubsub \
 
 [ see walkthrough3.md ]
 
+**500**
+Check the `LLM_MODEL` in `config.py`.
+Check project id and active billing account.

@@ -1,2 +1,3 @@
 AUTO_APPROVE_THRESHOLD = 100.0
-LLM_MODEL = "gemini-3.1-flash-lite"
+# LLM_MODEL = "gemini-3.1-flash-lite"
+LLM_MODEL = "gemini-3.8-flash"
